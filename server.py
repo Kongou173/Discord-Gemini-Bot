@@ -1,6 +1,10 @@
 import discord
 import aiohttp
 import os
+import logging
+
+# ログ設定
+logging.basicConfig(level=logging.INFO)
 
 intents = discord.Intents.default()
 intents.messages = True
@@ -15,7 +19,7 @@ GEMINI_API_URL = 'https://api.gemini.com/v1/pubticker/btcusd'
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user}')
+    logging.info(f'Logged in as {client.user}')
 
 @client.event
 async def on_message(message):
@@ -28,6 +32,7 @@ async def on_message(message):
         if user_id in conversation_history:
             del conversation_history[user_id]
         await message.channel.send("会話履歴がクリアされました。")
+        logging.info(f'Conversation history cleared for user {user_id}')
         return
 
     if user_id not in conversation_history:
@@ -44,10 +49,13 @@ async def on_message(message):
                         await message.channel.send(
                             f"BTC/USD:\nLast: {data['last']}\nAsk: {data['ask']}\nBid: {data['bid']}"
                         )
+                        logging.info(f'Successfully fetched data from Gemini API for user {user_id}')
                     else:
                         await message.channel.send(f"Error: {response.status}")
+                        logging.error(f'Error fetching data from Gemini API: {response.status}')
             except Exception as e:
                 await message.channel.send(f"Error: {str(e)}")
+                logging.error(f'Exception occurred: {str(e)}')
     else:
         await message.channel.send(f'会話履歴: {conversation_history[user_id]}')
 
