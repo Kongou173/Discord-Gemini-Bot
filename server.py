@@ -6,6 +6,10 @@ import logging
 # ログ設定
 logging.basicConfig(level=logging.INFO)
 
+
+logging.info(f'DISCORD_TOKEN: {os.getenv("DISCORD_TOKEN")}')
+logging.info(f'GEMINI_API_KEY: {os.getenv("GEMINI_API_KEY")}')
+
 intents = discord.Intents.default()
 intents.messages = True
 client = discord.Client(intents=intents)
